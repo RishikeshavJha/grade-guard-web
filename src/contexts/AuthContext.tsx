@@ -31,15 +31,15 @@ const mockUsers: User[] = [
   },
   {
     id: '2',
-    email: 'teacher@edu.com',
+    email: 'teacher@saraswati.com',
     name: 'Prof. Rajesh Khanna',
     role: 'teacher',
     subject: 'Mathematics',
   },
   {
     id: '3',
-    email: 'devansh.student@edu.com',
-    name: 'Devansh Gupta',
+    email: 'atharva.student@saraswati.com',
+    name: 'CR Atharva Kadam',
     role: 'student',
     studentId: 'STU2024002',
     class: '10-B',
