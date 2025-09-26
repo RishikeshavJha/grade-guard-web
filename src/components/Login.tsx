@@ -57,8 +57,8 @@ const Login = () => {
           <div className="flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-soft mx-auto mb-4">
             <GraduationCap className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-white">EduManage</h1>
-          <p className="text-white/80">Education Management System</p>
+          <h1 className="text-3xl font-bold text-white">Saraswati</h1>
+          <p className="text-white/80">Saraswati Management System</p>
         </div>
 
         {/* Login Card */}
