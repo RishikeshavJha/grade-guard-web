@@ -61,7 +61,7 @@ export const AppSidebar = () => {
             </div>
             {!collapsed && (
               <div>
-                <h2 className="font-bold text-lg">EduManage</h2>
+                <h2 className="font-bold text-lg">Saraswati</h2>
                 <p className="text-xs text-muted-foreground capitalize">
                   {user?.role} Portal
                 </p>
