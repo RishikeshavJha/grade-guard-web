@@ -31,7 +31,7 @@ const mockUsers: User[] = [
   },
   {
     id: '2',
-    email: 'teacher@saraswati.com',
+    email: 'teacher@edu.com',
     name: 'Prof. Rajesh Khanna',
     role: 'teacher',
     subject: 'Mathematics',
