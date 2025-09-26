@@ -52,7 +52,7 @@ export const AppSidebar = () => {
 
   return (
     <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="icon">
-      <SidebarContent className="bg-white border-r">
+      <SidebarContent className="bg-blue-800 text-white border-r">
         {/* Logo/Brand */}
         <div className="p-4 border-b">
           <div className="flex items-center gap-3">
