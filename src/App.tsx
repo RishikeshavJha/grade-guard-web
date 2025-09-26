@@ -8,6 +8,19 @@ import Login from "./components/Login";
 import Dashboard from "./pages/Dashboard";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import NotFound from "./pages/NotFound";
+import NotesPage from "./pages/NotesPage";
+import TimetablePage from "./pages/TimetablePage";
+import ScanAttendancePage from "./pages/ScanAttendancePage";
+import MyAttendancePage from "./pages/MyAttendancePage";
+import NoticesPage from "./pages/NoticesPage";
+import HelpSupportPage from "./pages/HelpSupportPage";
+import StudentsPage from "./pages/StudentsPage";
+import UploadNotesPage from "./pages/UploadNotesPage";
+import NotesManagementPage from "./pages/NotesManagementPage";
+import TimetableSchedulerPage from "./pages/TimetableSchedulerPage";
+import GenerateQRPage from "./pages/GenerateQRPage";
+import AttendanceReportsPage from "./pages/AttendanceReportsPage";
+import AnnouncementPage from "./pages/AnnouncementPage";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +70,97 @@ const App = () => (
               <ProtectedRoute>
                 <DashboardLayout>
                   <Dashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/notes" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <NotesPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/timetable" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <TimetablePage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/scan-attendance" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <ScanAttendancePage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/my-attendance" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <MyAttendancePage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/notices" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <NoticesPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/help-support" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <HelpSupportPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/students" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <StudentsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/upload-notes" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <UploadNotesPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/notes-management" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <NotesManagementPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/timetable-scheduler" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <TimetableSchedulerPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/generate-qr" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <GenerateQRPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/attendance-reports" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <AttendanceReportsPage />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/announcement" element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <AnnouncementPage />
                 </DashboardLayout>
               </ProtectedRoute>
             } />
