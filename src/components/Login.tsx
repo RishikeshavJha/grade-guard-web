@@ -32,7 +32,7 @@ const Login = () => {
     if (result.success) {
       toast({
         title: "Login Successful",
-        description: "Welcome to the Education Management System",
+        description: "Welcome to the Saraswati Management System",
       });
       navigate('/dashboard');
     } else {
