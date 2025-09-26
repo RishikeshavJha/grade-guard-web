@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 export interface User {
   id: string;
@@ -17,15 +15,14 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
-  supabaseUser: SupabaseUser | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock user data
+// Mock user data with proper UUIDs for database integration
 const mockUsers: User[] = [
   {
-    id: '1',
+    id: '11111111-1111-1111-1111-111111111111',
     email: 'student@edu.com',
     name: 'Rohan Sharma',
     role: 'student',
@@ -33,14 +30,14 @@ const mockUsers: User[] = [
     class: '10-A',
   },
   {
-    id: '2',
+    id: '22222222-2222-2222-2222-222222222222',
     email: 'teacher@edu.com',
     name: 'Prof. Rajesh Khanna',
     role: 'teacher',
     subject: 'Mathematics',
   },
   {
-    id: '3',
+    id: '33333333-3333-3333-3333-333333333333',
     email: 'atharva.student@saraswati.com',
     name: 'CR Atharva Kadam',
     role: 'student',
@@ -48,7 +45,7 @@ const mockUsers: User[] = [
     class: '10-B',
   },
   {
-    id: '4',
+    id: '44444444-4444-4444-4444-444444444444',
     email: 'vivek.teacher@edu.com',
     name: 'Prof. Vivek Kulkarni',
     role: 'teacher',
@@ -58,74 +55,55 @@ const mockUsers: User[] = [
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setSupabaseUser(session.user);
-        // Map to our User interface with mock data for now
-        const mockUser = mockUsers.find(u => u.email === session.user.email);
-        if (mockUser) {
-          setUser({ ...mockUser, id: session.user.id });
-        }
+    // Check for stored user session
+    const storedUser = localStorage.getItem('edu_user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        localStorage.removeItem('edu_user');
       }
-      setIsLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session?.user) {
-          setSupabaseUser(session.user);
-          const mockUser = mockUsers.find(u => u.email === session.user.email);
-          if (mockUser) {
-            setUser({ ...mockUser, id: session.user.id });
-          }
-        } else {
-          setSupabaseUser(null);
-          setUser(null);
-        }
-        setIsLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
+    }
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setIsLoading(false);
-        return { success: false, error: error.message };
-      }
-
-      // User will be set by the auth state change listener
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Find user by email
+    const foundUser = mockUsers.find(u => u.email === email);
+    
+    if (!foundUser) {
       setIsLoading(false);
-      return { success: true };
-    } catch (error) {
-      setIsLoading(false);
-      return { success: false, error: 'An unexpected error occurred' };
+      return { success: false, error: 'Invalid email or password' };
     }
+    
+    // Simple password validation (in real app, this would be hashed)
+    if (password !== 'password123') {
+      setIsLoading(false);
+      return { success: false, error: 'Invalid email or password' };
+    }
+    
+    setUser(foundUser);
+    localStorage.setItem('edu_user', JSON.stringify(foundUser));
+    setIsLoading(false);
+    
+    return { success: true };
   };
 
-  const logout = async () => {
-    await supabase.auth.signOut();
+  const logout = () => {
     setUser(null);
-    setSupabaseUser(null);
+    localStorage.removeItem('edu_user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading, supabaseUser }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
