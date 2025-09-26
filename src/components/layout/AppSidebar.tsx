@@ -71,7 +71,7 @@ export const AppSidebar = () => {
         </div>
 
         <SidebarGroup>
-          <SidebarGroupLabel>
+          <SidebarGroupLabel className="text-cyan-400">
             {user?.role === 'student' ? 'Student Portal' : 'Teacher Portal'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -110,7 +110,7 @@ export const AppSidebar = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{user?.name}</p>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-cyan-400 truncate">
                   {user?.studentId || user?.subject}
                 </p>
               </div>
