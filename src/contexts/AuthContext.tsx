@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 export interface User {
   id: string;
@@ -15,6 +17,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
+  supabaseUser: SupabaseUser | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,55 +58,74 @@ const mockUsers: User[] = [
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user session
-    const storedUser = localStorage.getItem('edu_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        localStorage.removeItem('edu_user');
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setSupabaseUser(session.user);
+        // Map to our User interface with mock data for now
+        const mockUser = mockUsers.find(u => u.email === session.user.email);
+        if (mockUser) {
+          setUser({ ...mockUser, id: session.user.id });
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session?.user) {
+          setSupabaseUser(session.user);
+          const mockUser = mockUsers.find(u => u.email === session.user.email);
+          if (mockUser) {
+            setUser({ ...mockUser, id: session.user.id });
+          }
+        } else {
+          setSupabaseUser(null);
+          setUser(null);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Find user by email
-    const foundUser = mockUsers.find(u => u.email === email);
-    
-    if (!foundUser) {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setIsLoading(false);
+        return { success: false, error: error.message };
+      }
+
+      // User will be set by the auth state change listener
       setIsLoading(false);
-      return { success: false, error: 'Invalid email or password' };
-    }
-    
-    // Simple password validation (in real app, this would be hashed)
-    if (password !== 'password123') {
+      return { success: true };
+    } catch (error) {
       setIsLoading(false);
-      return { success: false, error: 'Invalid email or password' };
+      return { success: false, error: 'An unexpected error occurred' };
     }
-    
-    setUser(foundUser);
-    localStorage.setItem('edu_user', JSON.stringify(foundUser));
-    setIsLoading(false);
-    
-    return { success: true };
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('edu_user');
+    setSupabaseUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, supabaseUser }}>
       {children}
     </AuthContext.Provider>
   );
