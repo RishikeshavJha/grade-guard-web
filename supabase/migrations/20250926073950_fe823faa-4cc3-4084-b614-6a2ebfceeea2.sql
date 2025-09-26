@@ -1,0 +1,12 @@
+-- Drop all foreign key constraints to allow demo data
+ALTER TABLE public.classes DROP CONSTRAINT IF EXISTS classes_teacher_id_fkey;
+ALTER TABLE public.notes DROP CONSTRAINT IF EXISTS notes_teacher_id_fkey;
+ALTER TABLE public.attendance_sessions DROP CONSTRAINT IF EXISTS attendance_sessions_teacher_id_fkey;
+ALTER TABLE public.attendance_records DROP CONSTRAINT IF EXISTS attendance_records_student_id_fkey;
+
+-- Insert demo users first
+INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, invited_at, confirmation_token, confirmation_sent_at, recovery_token, recovery_sent_at, email_change_token_new, email_change, email_change_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, is_super_admin, created_at, updated_at, phone, phone_confirmed_at, phone_change, phone_change_token, phone_change_sent_at, email_change_token_current, email_change_confirm_status, banned_until, reauthentication_token, reauthentication_sent_at, is_sso_user, deleted_at)
+VALUES 
+('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'teacher@edu.com', crypt('password123', gen_salt('bf')), NOW(), null, '', NOW(), '', NOW(), '', '', NOW(), NOW(), '{"provider":"email","providers":["email"]}', '{"name":"Prof. Rajesh Khanna","role":"teacher"}', false, NOW(), NOW(), null, null, '', '', null, '', 0, null, '', null, false, null),
+('44444444-4444-4444-4444-444444444444', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'vivek.teacher@edu.com', crypt('password123', gen_salt('bf')), NOW(), null, '', NOW(), '', NOW(), '', '', NOW(), NOW(), '{"provider":"email","providers":["email"]}', '{"name":"Prof. Vivek Kulkarni","role":"teacher"}', false, NOW(), NOW(), null, null, '', '', null, '', 0, null, '', null, false, null),
+('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'student@edu.com', crypt('password123', gen_salt('bf')), NOW(), null, '', NOW(), '', NOW(), '', '', NOW(), NOW(), '{"provider":"email","providers":["email"]}', '{"name":"Rohan Sharma","role":"student"}', false, NOW(), NOW(), null, null, '', '', null, '', 0, null, '', null, false, null);
