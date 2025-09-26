@@ -22,22 +22,32 @@ import {
   BarChart3,
   Upload,
   GraduationCap,
+  Megaphone,
+  HelpCircle,
 } from 'lucide-react';
 
+// Student menu items (ordered by importance)
 const studentMenuItems = [
   { title: 'Dashboard', url: '/dashboard', icon: Home },
   { title: 'My Notes', url: '/notes', icon: BookOpen },
+  { title: 'Timetable', url: '/timetable', icon: Calendar },
   { title: 'Scan Attendance', url: '/scan-attendance', icon: QrCode },
   { title: 'My Attendance', url: '/my-attendance', icon: Calendar },
+  { title: 'Notices', url: '/notices', icon: FileText },
+  { title: 'Help & Support', url: '/help-support', icon: HelpCircle },
 ];
 
+// Teacher menu items (ordered by importance)
 const teacherMenuItems = [
   { title: 'Dashboard', url: '/dashboard', icon: Home },
+  { title: 'Students', url: '/students', icon: Users },
   { title: 'Upload Notes', url: '/upload-notes', icon: Upload },
+  { title: 'Notes Management', url: '/notes-management', icon: FileText },
+  { title: 'Timetable Scheduler', url: '/timetable-scheduler', icon: Calendar },
   { title: 'Generate QR', url: '/generate-qr', icon: QrCode },
   { title: 'Attendance Reports', url: '/attendance-reports', icon: BarChart3 },
-  { title: 'Students', url: '/students', icon: Users },
-  { title: 'Notes Management', url: '/notes-management', icon: FileText },
+  { title: 'Announcement', url: '/announcement', icon: Megaphone },
+  { title: 'Help & Support', url: '/help-support', icon: HelpCircle },
 ];
 
 export const AppSidebar = () => {
@@ -47,8 +57,6 @@ export const AppSidebar = () => {
   const collapsed = state === 'collapsed';
   
   const menuItems = user?.role === 'student' ? studentMenuItems : teacherMenuItems;
-  
-  const isActive = (path: string) => location.pathname === path;
 
   return (
     <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="icon">
