@@ -15,18 +15,18 @@ export const DUMMY_DATA = {
     { id: 5, name: 'Mr. Arjun Mehta', subject: 'English', email: 'arjun.mehta@school.edu' },
   ],
 
-  // Students data with Indian names
+  // Students data with Indian names and attendance details
   students: [
-    { id: 1, name: 'Aarav Sharma', class: '10-A', rollNo: 'A001', attendance: 92, email: 'aarav.sharma@student.edu' },
-    { id: 2, name: 'Ananya Gupta', class: '10-A', rollNo: 'A002', attendance: 95, email: 'ananya.gupta@student.edu' },
-    { id: 3, name: 'Arjun Singh', class: '10-A', rollNo: 'A003', attendance: 88, email: 'arjun.singh@student.edu' },
-    { id: 4, name: 'Diya Patel', class: '10-A', rollNo: 'A004', attendance: 97, email: 'diya.patel@student.edu' },
-    { id: 5, name: 'Ishaan Kumar', class: '10-A', rollNo: 'A005', attendance: 91, email: 'ishaan.kumar@student.edu' },
-    { id: 6, name: 'Kavya Mehta', class: '10-A', rollNo: 'A006', attendance: 93, email: 'kavya.mehta@student.edu' },
-    { id: 7, name: 'Krishna Agarwal', class: '10-A', rollNo: 'A007', attendance: 89, email: 'krishna.agarwal@student.edu' },
-    { id: 8, name: 'Meera Joshi', class: '10-A', rollNo: 'A008', attendance: 94, email: 'meera.joshi@student.edu' },
-    { id: 9, name: 'Nisha Reddy', class: '10-A', rollNo: 'A009', attendance: 96, email: 'nisha.reddy@student.edu' },
-    { id: 10, name: 'Pranav Chopra', class: '10-A', rollNo: 'A010', attendance: 87, email: 'pranav.chopra@student.edu' },
+    { id: 1, name: 'Aarav Sharma', class: '10-A', rollNo: 'A001', attendance: 92, email: 'aarav.sharma@student.edu', parentContact: '+91 98765 12001' },
+    { id: 2, name: 'Ananya Gupta', class: '10-A', rollNo: 'A002', attendance: 95, email: 'ananya.gupta@student.edu', parentContact: '+91 98765 12002' },
+    { id: 3, name: 'Arjun Singh', class: '10-A', rollNo: 'A003', attendance: 88, email: 'arjun.singh@student.edu', parentContact: '+91 98765 12003' },
+    { id: 4, name: 'Diya Patel', class: '10-A', rollNo: 'A004', attendance: 97, email: 'diya.patel@student.edu', parentContact: '+91 98765 12004' },
+    { id: 5, name: 'Ishaan Kumar', class: '10-A', rollNo: 'A005', attendance: 91, email: 'ishaan.kumar@student.edu', parentContact: '+91 98765 12005' },
+    { id: 6, name: 'Kavya Mehta', class: '10-A', rollNo: 'A006', attendance: 93, email: 'kavya.mehta@student.edu', parentContact: '+91 98765 12006' },
+    { id: 7, name: 'Krishna Agarwal', class: '10-A', rollNo: 'A007', attendance: 89, email: 'krishna.agarwal@student.edu', parentContact: '+91 98765 12007' },
+    { id: 8, name: 'Meera Joshi', class: '10-A', rollNo: 'A008', attendance: 94, email: 'meera.joshi@student.edu', parentContact: '+91 98765 12008' },
+    { id: 9, name: 'Nisha Reddy', class: '10-A', rollNo: 'A009', attendance: 96, email: 'nisha.reddy@student.edu', parentContact: '+91 98765 12009' },
+    { id: 10, name: 'Pranav Chopra', class: '10-A', rollNo: 'A010', attendance: 87, email: 'pranav.chopra@student.edu', parentContact: '+91 98765 12010' },
   ],
 
   // Notes/Study Materials
@@ -133,10 +133,18 @@ export const DUMMY_DATA = {
     return DUMMY_DATA.timetable.filter(item => item.day === currentDay && item.class === className);
   },
 
-  // Get attendance for a specific student
+  // Get attendance for a specific student with detailed info
   getStudentAttendance: (studentId: number) => {
     const student = DUMMY_DATA.students.find(s => s.id === studentId);
-    return student ? student.attendance : 90;
+    const attendance = student ? student.attendance : 90;
+    const totalDays = 45;
+    const daysPresent = Math.round((attendance / 100) * totalDays);
+    return {
+      percentage: attendance,
+      daysPresent: daysPresent,
+      totalDays: totalDays,
+      todayStatus: 'Present' as const
+    };
   },
 
   // Calculate overall attendance stats

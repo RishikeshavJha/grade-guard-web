@@ -127,7 +127,7 @@ const MyAttendancePage = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {DUMMY_DATA.getTodaysTimetable().map((subject, index) => {
+            {DUMMY_DATA.getTodaysTimetable('10-A').map((subject, index) => {
               const subjectAttendance = Math.floor(Math.random() * 20) + 80; // 80-100%
               return (
                 <div key={index} className="flex items-center justify-between p-4 border rounded-lg">

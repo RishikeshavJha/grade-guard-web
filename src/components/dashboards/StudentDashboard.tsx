@@ -23,9 +23,10 @@ const StudentDashboard = () => {
   const { getTodaysTimetable } = useTimetable();
 
   // Data from centralized dummy data and timetable context
-  const attendancePercentage = DUMMY_DATA.getStudentAttendance(1);
-  const totalClasses = 45;
-  const attendedClasses = Math.round((attendancePercentage / 100) * totalClasses);
+  const attendanceData = DUMMY_DATA.getStudentAttendance(1);
+  const attendancePercentage = attendanceData.percentage;
+  const totalClasses = attendanceData.totalDays;
+  const attendedClasses = attendanceData.daysPresent;
   const recentNotes = getRecentNotes(3);
   const todaysClasses = getTodaysTimetable('10-A').filter(item => item.type === 'lecture');
 
