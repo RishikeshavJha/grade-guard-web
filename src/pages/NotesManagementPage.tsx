@@ -38,7 +38,7 @@ const NotesManagementPage = () => {
       const { data, error } = await supabase
         .from('notes')
         .select('*')
-        .eq('teacher_id', user?.id)
+        .eq('created_by', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -91,8 +91,8 @@ const NotesManagementPage = () => {
             title: formData.title,
             subject: formData.subject,
             content: formData.content,
-            teacher_id: user?.id!,
-            teacher_name: user?.name!,
+            created_by: user?.id!,
+            teacher_name: user?.email || 'Teacher',
           });
 
         if (error) throw error;

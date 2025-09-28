@@ -96,7 +96,7 @@ const ScanAttendancePage = () => {
         .from('attendance_records')
         .select('*')
         .eq('session_id', qrData.sessionId)
-        .eq('student_id', user?.id)
+        .eq('student_name', user?.email || 'Student')
         .single();
 
       if (existingRecord) {
@@ -108,9 +108,7 @@ const ScanAttendancePage = () => {
         .from('attendance_records')
         .insert({
           session_id: qrData.sessionId,
-          student_id: user?.id!,
-          student_name: user?.name!,
-          status: 'present',
+          student_name: user?.email || 'Student',
         });
 
       if (attendanceError) throw attendanceError;

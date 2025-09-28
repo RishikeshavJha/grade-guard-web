@@ -32,7 +32,6 @@ const GenerateQRPage = () => {
       const { data, error } = await supabase
         .from('classes')
         .select('*')
-        .eq('teacher_id', user?.id)
         .order('subject');
 
       if (error) throw error;
@@ -87,8 +86,6 @@ const GenerateQRPage = () => {
         .insert({
           id: sessionId,
           class_id: selectedClass,
-          teacher_id: user?.id!,
-          qr_code: qrData,
           expires_at: expiresAt.toISOString(),
           is_active: true,
         })
