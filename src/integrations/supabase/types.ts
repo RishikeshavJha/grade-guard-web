@@ -14,118 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
-      attendance_records: {
+      "attendance table:": {
         Row: {
+          created_at: string | null
+          date: string
           id: string
-          marked_at: string
-          session_id: string
-          status: string
-          student_id: string
-          student_name: string
+          status: string | null
+          student_name: string | null
         }
         Insert: {
+          created_at?: string | null
+          date: string
           id?: string
-          marked_at?: string
-          session_id: string
-          status?: string
-          student_id: string
-          student_name: string
+          status?: string | null
+          student_name?: string | null
         }
         Update: {
+          created_at?: string | null
+          date?: string
           id?: string
-          marked_at?: string
-          session_id?: string
-          status?: string
-          student_id?: string
-          student_name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "attendance_records_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "attendance_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      attendance_sessions: {
-        Row: {
-          class_id: string
-          created_at: string
-          expires_at: string
-          id: string
-          is_active: boolean
-          qr_code: string
-          session_date: string
-          teacher_id: string
-        }
-        Insert: {
-          class_id: string
-          created_at?: string
-          expires_at: string
-          id?: string
-          is_active?: boolean
-          qr_code: string
-          session_date?: string
-          teacher_id: string
-        }
-        Update: {
-          class_id?: string
-          created_at?: string
-          expires_at?: string
-          id?: string
-          is_active?: boolean
-          qr_code?: string
-          session_date?: string
-          teacher_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "attendance_sessions_class_id_fkey"
-            columns: ["class_id"]
-            isOneToOne: false
-            referencedRelation: "classes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      classes: {
-        Row: {
-          created_at: string
-          day_of_week: number
-          end_time: string
-          id: string
-          room_number: string | null
-          start_time: string
-          subject: string
-          teacher_id: string | null
-          teacher_name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          day_of_week: number
-          end_time: string
-          id?: string
-          room_number?: string | null
-          start_time: string
-          subject: string
-          teacher_id?: string | null
-          teacher_name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          day_of_week?: number
-          end_time?: string
-          id?: string
-          room_number?: string | null
-          start_time?: string
-          subject?: string
-          teacher_id?: string | null
-          teacher_name?: string
-          updated_at?: string
+          status?: string | null
+          student_name?: string | null
         }
         Relationships: []
       }
@@ -133,50 +42,23 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          created_by: string
           id: string
-          subject: string
-          teacher_id: string
-          teacher_name: string
           title: string
-          updated_at: string
         }
         Insert: {
           content: string
           created_at?: string
+          created_by: string
           id?: string
-          subject: string
-          teacher_id: string
-          teacher_name: string
           title: string
-          updated_at?: string
         }
         Update: {
           content?: string
           created_at?: string
+          created_by?: string
           id?: string
-          subject?: string
-          teacher_id?: string
-          teacher_name?: string
           title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      system_info: {
-        Row: {
-          created_at: string
-          id: string
-          version: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          version?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          version?: string
         }
         Relationships: []
       }
