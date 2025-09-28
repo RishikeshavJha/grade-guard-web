@@ -51,7 +51,7 @@ export const TimetableProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         room: item.room_number || 'N/A',
         timeSlot: `${item.start_time} - ${item.end_time}`,
         day: item.day_of_week,
-        type: 'Regular',
+        type: 'lecture',
         class: 'All Classes'
       }));
 
@@ -68,7 +68,9 @@ export const TimetableProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getTimetableForDay = (day: number, className?: string) => {
-    return timetable.filter(cls => cls.day === day && (!className || cls.class === className));
+    // Filter by day and if className is provided, ensure the schedule is for that class
+    // Since we don't have class mapping in DB yet, show all classes for now
+    return timetable.filter(cls => cls.day === day);
   };
 
   const getTodaysTimetable = (className?: string) => {
