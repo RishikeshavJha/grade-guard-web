@@ -153,7 +153,7 @@ const NotesManagementPage = () => {
     }
   };
 
-  const filteredNotes = notes.filter(note =>
+  const filteredNotes = (allNotes || []).filter((note: any) =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     note.subject.toLowerCase().includes(searchTerm.toLowerCase())
   );

@@ -15,17 +15,19 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DUMMY_DATA, getRecentNotes } from '@/data/dummyData';
+import { useTimetable } from '@/contexts/TimetableContext';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { getTodaysTimetable } = useTimetable();
 
-  // Data from centralized dummy data
+  // Data from centralized dummy data and timetable context
   const attendancePercentage = DUMMY_DATA.getStudentAttendance(1);
   const totalClasses = 45;
   const attendedClasses = Math.round((attendancePercentage / 100) * totalClasses);
   const recentNotes = getRecentNotes(3);
-  const todaysClasses = DUMMY_DATA.getTodaysTimetable('10-A').filter(item => item.type === 'lecture');
+  const todaysClasses = getTodaysTimetable('10-A').filter(item => item.type === 'lecture');
 
   return (
     <div className="space-y-6">

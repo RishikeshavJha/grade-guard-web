@@ -1,67 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Clock, User } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import type { Tables } from '@/integrations/supabase/types';
-
-type Class = Tables<'classes'>;
+import { Calendar, Clock, User, MapPin } from 'lucide-react';
+import { useTimetable } from '@/contexts/TimetableContext';
+import { getDaysOfWeek } from '@/data/dummyData';
 
 const TimetablePage = () => {
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchClasses();
-  }, []);
-
-  const fetchClasses = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('classes')
-        .select('*')
-        .order('day_of_week', { ascending: true })
-        .order('start_time', { ascending: true });
-
-      if (error) throw error;
-      setClasses(data || []);
-    } catch (error) {
-      console.error('Error fetching classes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const daysOfWeek = [
-    { id: 1, name: 'Monday' },
-    { id: 2, name: 'Tuesday' },
-    { id: 3, name: 'Wednesday' },
-    { id: 4, name: 'Thursday' },
-    { id: 5, name: 'Friday' },
-  ];
+  const { getTimetableForDay } = useTimetable();
+  const daysOfWeek = getDaysOfWeek();
 
   const getClassesForDay = (dayId: number) => {
-    return classes.filter(cls => cls.day_of_week === dayId);
+    // Get timetable for student's class (10-A by default)
+    return getTimetableForDay(dayId, '10-A');
   };
-
-  const formatTime = (time: string) => {
-    return new Date(`1970-01-01T${time}`).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <Calendar className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold">Weekly Timetable</h1>
-        </div>
-        <div className="text-center py-8">Loading timetable...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -87,23 +37,30 @@ const TimetablePage = () => {
                     </p>
                   ) : (
                     dayClasses.map((cls) => (
-                      <Card key={cls.id} className="bg-background border border-border/50">
+                      <Card key={cls.id} className={`border border-border/50 ${
+                        cls.type === 'break' 
+                          ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20' 
+                          : 'bg-background'
+                      }`}>
                         <CardContent className="p-3">
                           <div className="space-y-2">
-                            <h4 className="font-semibold text-sm">{cls.subject}</h4>
+                            <h4 className="font-semibold text-sm">
+                              {cls.subject || 'Break'}
+                            </h4>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Clock className="h-3 w-3" />
-                              <span>
-                                {formatTime(cls.start_time)} - {formatTime(cls.end_time)}
-                              </span>
+                              <span>{cls.timeSlot}</span>
                             </div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <User className="h-3 w-3" />
-                              <span>{cls.teacher_name}</span>
-                            </div>
-                            {cls.room_number && (
-                              <div className="text-xs text-muted-foreground">
-                                Room: {cls.room_number}
+                            {cls.teacher && (
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <User className="h-3 w-3" />
+                                <span>{cls.teacher}</span>
+                              </div>
+                            )}
+                            {cls.room && (
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <MapPin className="h-3 w-3" />
+                                <span>{cls.room}</span>
                               </div>
                             )}
                           </div>

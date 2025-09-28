@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { TimetableProvider } from "@/contexts/TimetableContext";
+import { NotesProvider } from "@/contexts/NotesContext";
 import Login from "./components/Login";
 import Dashboard from "./pages/Dashboard";
 import DashboardLayout from "./components/layout/DashboardLayout";
@@ -58,9 +59,10 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <TimetableProvider>
-          <Toaster />
-          <Sonner />
-        <BrowserRouter>
+          <NotesProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/login" element={
@@ -169,7 +171,8 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+            </BrowserRouter>
+          </NotesProvider>
         </TimetableProvider>
       </AuthProvider>
     </TooltipProvider>

@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import { BookOpen, Search, Calendar, User, Download, Eye, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { DUMMY_DATA, getNotesCount, getRecentNotes } from '@/data/dummyData';
+import { useNotes } from '@/contexts/NotesContext';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Note = Tables<'notes'>;
 
 const NotesPage = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const { notes: contextNotes } = useNotes();
+  const [dbNotes, setDbNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -28,41 +30,32 @@ const NotesPage = () => {
 
       if (error) throw error;
       
-      // Combine database notes with dummy notes for comprehensive view
-      const combinedNotes = [
-        ...(data || []),
-        ...DUMMY_DATA.notes.map(note => ({
-          id: note.id.toString(),
-          title: note.title,
-          content: note.content,
-          subject: note.subject || 'General',
-          teacher_name: note.teacher,
-          created_at: note.date,
-          updated_at: note.date,
-          created_by: 'dummy-teacher-id'
-        }))
-      ];
-      
-      setNotes(combinedNotes);
+      // Set database notes
+      setDbNotes(data || []);
     } catch (error) {
       console.error('Error fetching notes:', error);
-      // Fallback to dummy data
-      setNotes(DUMMY_DATA.notes.map(note => ({
-        id: note.id.toString(),
-        title: note.title,
-        content: note.content,
-        subject: note.subject || 'General',
-        teacher_name: note.teacher,
-        created_at: note.date,
-        updated_at: note.date,
-        created_by: 'dummy-teacher-id'
-      })));
+      setDbNotes([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredNotes = notes.filter(note =>
+  // Combine context notes with database notes
+  const allNotes = [
+    ...contextNotes.map(note => ({
+      id: note.id,
+      title: note.title,
+      content: note.content,
+      subject: note.subject,
+      teacher_name: note.teacher,
+      created_at: note.date,
+      updated_at: note.date,
+      created_by: note.createdBy
+    })),
+    ...dbNotes
+  ];
+
+  const filteredNotes = allNotes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (note.subject && note.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (note.teacher_name && note.teacher_name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -119,7 +112,7 @@ const NotesPage = () => {
             <CardTitle className="text-sm text-muted-foreground">Total Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{getNotesCount()}</div>
+            <div className="text-2xl font-bold">{allNotes.length}</div>
           </CardContent>
         </Card>
         <Card>

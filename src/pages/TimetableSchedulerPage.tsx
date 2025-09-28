@@ -17,11 +17,14 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { DUMMY_DATA, getDaysOfWeek } from '@/data/dummyData';
+import { useTimetable } from '@/contexts/TimetableContext';
 
 const TimetableSchedulerPage = () => {
   const { toast } = useToast();
+  const { getTimetableForDay, addTimetableSlot, deleteTimetableSlot, updateTimetableSlot } = useTimetable();
   const [selectedClass, setSelectedClass] = useState('10-A');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingSlot, setEditingSlot] = useState<string | null>(null);
   const [newSlot, setNewSlot] = useState({
     day: '',
     timeSlot: '',
@@ -36,18 +39,20 @@ const TimetableSchedulerPage = () => {
   const timeSlots = [
     '09:00 AM - 09:45 AM',
     '09:45 AM - 10:30 AM',
-    '10:30 AM - 10:45 AM', // Break
-    '10:45 AM - 11:30 AM',
-    '11:30 AM - 12:15 PM',
-    '12:15 PM - 01:00 PM'
+    '10:30 AM - 11:00 AM', // 30-minute Break
+    '11:00 AM - 11:45 AM',
+    '11:45 AM - 12:30 PM',
+    '12:30 PM - 01:15 PM'
   ];
 
   const getClassTimetable = () => {
-    return DUMMY_DATA.timetable.filter(item => item.class === selectedClass);
+    return getTimetableForDay(0, selectedClass).length > 0 
+      ? getTimetableForDay(0, selectedClass) 
+      : DUMMY_DATA.timetable.filter(item => item.class === selectedClass);
   };
 
-  const getTimetableForDay = (dayId: number) => {
-    return getClassTimetable().filter(item => item.day === dayId);
+  const getTimetableForDayAndClass = (dayId: number) => {
+    return getTimetableForDay(dayId, selectedClass);
   };
 
   const handleAddSlot = () => {
@@ -60,20 +65,59 @@ const TimetableSchedulerPage = () => {
       return;
     }
 
-    toast({
-      title: 'Class scheduled successfully!',
-      description: `Added ${newSlot.subject} for ${selectedClass} on ${daysOfWeek.find(d => d.id.toString() === newSlot.day)?.name}.`,
-    });
+    if (editingSlot) {
+      updateTimetableSlot(editingSlot, {
+        day: parseInt(newSlot.day),
+        timeSlot: newSlot.timeSlot,
+        subject: newSlot.subject,
+        teacher: newSlot.teacher,
+        room: newSlot.room,
+        class: selectedClass,
+        type: 'lecture'
+      });
+      toast({
+        title: 'Class updated successfully!',
+        description: `Updated ${newSlot.subject} for ${selectedClass}.`,
+      });
+      setEditingSlot(null);
+    } else {
+      addTimetableSlot({
+        day: parseInt(newSlot.day),
+        timeSlot: newSlot.timeSlot,
+        subject: newSlot.subject,
+        teacher: newSlot.teacher,
+        room: newSlot.room,
+        class: selectedClass,
+        type: 'lecture'
+      });
+      toast({
+        title: 'Class scheduled successfully!',
+        description: `Added ${newSlot.subject} for ${selectedClass} on ${daysOfWeek.find(d => d.id.toString() === newSlot.day)?.name}.`,
+      });
+    }
 
     setNewSlot({ day: '', timeSlot: '', subject: '', teacher: '', room: '' });
     setIsAddDialogOpen(false);
   };
 
-  const handleDeleteSlot = (day: number, timeSlot: string) => {
+  const handleDeleteSlot = (slotId: string) => {
+    deleteTimetableSlot(slotId);
     toast({
       title: 'Class removed',
       description: 'The class has been removed from the timetable.',
     });
+  };
+
+  const handleEditSlot = (slot: any) => {
+    setEditingSlot(slot.id);
+    setNewSlot({
+      day: slot.day.toString(),
+      timeSlot: slot.timeSlot,
+      subject: slot.subject,
+      teacher: slot.teacher,
+      room: slot.room
+    });
+    setIsAddDialogOpen(true);
   };
 
   return (
@@ -96,7 +140,7 @@ const TimetableSchedulerPage = () => {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Class</DialogTitle>
+              <DialogTitle>{editingSlot ? 'Edit Class' : 'Add New Class'}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -175,7 +219,7 @@ const TimetableSchedulerPage = () => {
               </div>
 
               <Button onClick={handleAddSlot} className="w-full">
-                Add Class
+                {editingSlot ? 'Update Class' : 'Add Class'}
               </Button>
             </div>
           </DialogContent>
@@ -213,7 +257,7 @@ const TimetableSchedulerPage = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {daysOfWeek.map((day) => {
-              const dayClasses = getTimetableForDay(day.id);
+              const dayClasses = getTimetableForDayAndClass(day.id);
               
               return (
                 <div key={day.id} className="border rounded-lg p-4">
@@ -235,14 +279,19 @@ const TimetableSchedulerPage = () => {
                             </h4>
                             {classItem.type !== 'break' && (
                               <div className="flex gap-1">
-                                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-6 w-6 p-0"
+                                  onClick={() => handleEditSlot(classItem)}
+                                >
                                   <Edit3 className="h-3 w-3" />
                                 </Button>
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
                                   className="h-6 w-6 p-0 text-destructive hover:text-destructive"
-                                  onClick={() => handleDeleteSlot(day.id, classItem.timeSlot)}
+                                  onClick={() => handleDeleteSlot(classItem.id)}
                                 >
                                   <Trash2 className="h-3 w-3" />
                                 </Button>

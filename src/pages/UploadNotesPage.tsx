@@ -17,9 +17,13 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { DUMMY_DATA } from '@/data/dummyData';
+import { useNotes } from '@/contexts/NotesContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const UploadNotesPage = () => {
   const { toast } = useToast();
+  const { addNote, getNotesForTeacher } = useNotes();
+  const { user } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
@@ -59,8 +63,17 @@ const UploadNotesPage = () => {
 
     setIsUploading(true);
     
-    // Simulate upload process
+    // Simulate upload process and add to notes context
     setTimeout(() => {
+      addNote({
+        title: formData.title,
+        content: formData.description || `${formData.subject} study material for Class ${formData.targetClass}`,
+        subject: formData.subject,
+        teacher: user?.name || 'Teacher',
+        createdBy: user?.id || 'teacher-1',
+        fileUrl: URL.createObjectURL(selectedFile)
+      });
+
       toast({
         title: 'Notes uploaded successfully!',
         description: `QR code generated for "${formData.title}". Students can now scan to access the notes.`,
@@ -202,7 +215,7 @@ const UploadNotesPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {DUMMY_DATA.notes.slice(0, 5).map((note) => (
+              {getNotesForTeacher(user?.id || 'teacher-1').slice(0, 5).map((note: any) => (
                 <div key={note.id} className="border rounded-lg p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
@@ -276,7 +289,7 @@ const UploadNotesPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {DUMMY_DATA.notes.reduce((sum, note) => sum + note.downloads, 0)}
+              {DUMMY_DATA.notes.reduce((sum, note) => sum + (note.downloads || 0), 0)}
             </div>
             <p className="text-xs text-muted-foreground">Across all notes</p>
           </CardContent>
