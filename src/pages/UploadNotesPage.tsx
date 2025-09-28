@@ -63,9 +63,8 @@ const UploadNotesPage = () => {
 
     setIsUploading(true);
     
-    // Simulate upload process and add to notes context
-    setTimeout(() => {
-      addNote({
+    try {
+      await addNote({
         title: formData.title,
         content: formData.description || `${formData.subject} study material for Class ${formData.targetClass}`,
         subject: formData.subject,
@@ -82,8 +81,15 @@ const UploadNotesPage = () => {
       // Reset form
       setSelectedFile(null);
       setFormData({ title: '', subject: '', description: '', targetClass: '' });
+    } catch (error) {
+      toast({
+        title: 'Upload failed',
+        description: 'There was an error uploading your notes. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
       setIsUploading(false);
-    }, 2000);
+    }
   };
 
   const generateQRCode = (noteId: number) => {

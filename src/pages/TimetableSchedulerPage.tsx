@@ -55,7 +55,7 @@ const TimetableSchedulerPage = () => {
     return getTimetableForDay(dayId, selectedClass);
   };
 
-  const handleAddSlot = () => {
+  const handleAddSlot = async () => {
     if (!newSlot.day || !newSlot.timeSlot || !newSlot.subject || !newSlot.teacher) {
       toast({
         title: 'Missing information',
@@ -65,47 +65,63 @@ const TimetableSchedulerPage = () => {
       return;
     }
 
-    if (editingSlot) {
-      updateTimetableSlot(editingSlot, {
-        day: parseInt(newSlot.day),
-        timeSlot: newSlot.timeSlot,
-        subject: newSlot.subject,
-        teacher: newSlot.teacher,
-        room: newSlot.room,
-        class: selectedClass,
-        type: 'lecture'
-      });
+    try {
+      if (editingSlot) {
+        await updateTimetableSlot(editingSlot, {
+          day: parseInt(newSlot.day),
+          timeSlot: newSlot.timeSlot,
+          subject: newSlot.subject,
+          teacher: newSlot.teacher,
+          room: newSlot.room,
+          class: selectedClass,
+          type: 'lecture'
+        });
+        toast({
+          title: 'Class updated successfully!',
+          description: `Updated ${newSlot.subject} for ${selectedClass}.`,
+        });
+        setEditingSlot(null);
+      } else {
+        await addTimetableSlot({
+          day: parseInt(newSlot.day),
+          timeSlot: newSlot.timeSlot,
+          subject: newSlot.subject,
+          teacher: newSlot.teacher,
+          room: newSlot.room,
+          class: selectedClass,
+          type: 'lecture'
+        });
+        toast({
+          title: 'Class scheduled successfully!',
+          description: `Added ${newSlot.subject} for ${selectedClass} on ${daysOfWeek.find(d => d.id.toString() === newSlot.day)?.name}.`,
+        });
+      }
+
+      setNewSlot({ day: '', timeSlot: '', subject: '', teacher: '', room: '' });
+      setIsAddDialogOpen(false);
+    } catch (error) {
       toast({
-        title: 'Class updated successfully!',
-        description: `Updated ${newSlot.subject} for ${selectedClass}.`,
-      });
-      setEditingSlot(null);
-    } else {
-      addTimetableSlot({
-        day: parseInt(newSlot.day),
-        timeSlot: newSlot.timeSlot,
-        subject: newSlot.subject,
-        teacher: newSlot.teacher,
-        room: newSlot.room,
-        class: selectedClass,
-        type: 'lecture'
-      });
-      toast({
-        title: 'Class scheduled successfully!',
-        description: `Added ${newSlot.subject} for ${selectedClass} on ${daysOfWeek.find(d => d.id.toString() === newSlot.day)?.name}.`,
+        title: 'Error',
+        description: 'Failed to save timetable changes. Please try again.',
+        variant: 'destructive'
       });
     }
-
-    setNewSlot({ day: '', timeSlot: '', subject: '', teacher: '', room: '' });
-    setIsAddDialogOpen(false);
   };
 
-  const handleDeleteSlot = (slotId: string) => {
-    deleteTimetableSlot(slotId);
-    toast({
-      title: 'Class removed',
-      description: 'The class has been removed from the timetable.',
-    });
+  const handleDeleteSlot = async (slotId: string) => {
+    try {
+      await deleteTimetableSlot(slotId);
+      toast({
+        title: 'Class removed',
+        description: 'The class has been removed from the timetable.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete class. Please try again.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleEditSlot = (slot: any) => {
