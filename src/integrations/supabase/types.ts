@@ -38,27 +38,133 @@ export type Database = {
         }
         Relationships: []
       }
+      attendance_records: {
+        Row: {
+          created_at: string
+          id: string
+          session_id: string
+          student_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          session_id: string
+          student_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          session_id?: string
+          student_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_sessions: {
+        Row: {
+          class_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          is_active?: boolean
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_sessions_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          room_number: string | null
+          start_time: string
+          subject: string
+          teacher_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          room_number?: string | null
+          start_time: string
+          subject: string
+          teacher_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          room_number?: string | null
+          start_time?: string
+          subject?: string
+          teacher_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           content: string
           created_at: string
           created_by: string
           id: string
+          subject: string | null
+          teacher_name: string | null
           title: string
+          updated_at: string
         }
         Insert: {
           content: string
           created_at?: string
           created_by: string
           id?: string
+          subject?: string | null
+          teacher_name?: string | null
           title: string
+          updated_at?: string
         }
         Update: {
           content?: string
           created_at?: string
           created_by?: string
           id?: string
+          subject?: string | null
+          teacher_name?: string | null
           title?: string
+          updated_at?: string
         }
         Relationships: []
       }
