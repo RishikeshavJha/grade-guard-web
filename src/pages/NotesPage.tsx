@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Search, Calendar, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Search, Calendar, User, Download, Eye, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { DUMMY_DATA, getNotesCount, getRecentNotes } from '@/data/dummyData';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Note = Tables<'notes'>;
@@ -25,9 +27,36 @@ const NotesPage = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setNotes(data || []);
+      
+      // Combine database notes with dummy notes for comprehensive view
+      const combinedNotes = [
+        ...(data || []),
+        ...DUMMY_DATA.notes.map(note => ({
+          id: note.id.toString(),
+          title: note.title,
+          content: note.content,
+          subject: note.subject || 'General',
+          teacher_name: note.teacher,
+          created_at: note.date,
+          updated_at: note.date,
+          created_by: 'dummy-teacher-id'
+        }))
+      ];
+      
+      setNotes(combinedNotes);
     } catch (error) {
       console.error('Error fetching notes:', error);
+      // Fallback to dummy data
+      setNotes(DUMMY_DATA.notes.map(note => ({
+        id: note.id.toString(),
+        title: note.title,
+        content: note.content,
+        subject: note.subject || 'General',
+        teacher_name: note.teacher,
+        created_at: note.date,
+        updated_at: note.date,
+        created_by: 'dummy-teacher-id'
+      })));
     } finally {
       setLoading(false);
     }
@@ -35,8 +64,8 @@ const NotesPage = () => {
 
   const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.teacher_name.toLowerCase().includes(searchTerm.toLowerCase())
+    (note.subject && note.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (note.teacher_name && note.teacher_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const formatDate = (dateString: string) => {
@@ -83,6 +112,45 @@ const NotesPage = () => {
         </div>
       </div>
 
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-muted-foreground">Total Notes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getNotesCount()}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-muted-foreground">Recent Uploads</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">{getRecentNotes(7).length}</div>
+            <p className="text-xs text-muted-foreground">This week</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-muted-foreground">Subjects</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">8</div>
+            <p className="text-xs text-muted-foreground">Different subjects</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-muted-foreground">Downloads</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600">1,247</div>
+            <p className="text-xs text-muted-foreground">Total downloads</p>
+          </CardContent>
+        </Card>
+      </div>
+
       {filteredNotes.length === 0 ? (
         <Card>
           <CardContent className="text-center py-8">
@@ -99,13 +167,13 @@ const NotesPage = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <Badge variant="outline">{note.subject}</Badge>
+                    <Badge variant="outline">{note.subject || 'General'}</Badge>
                     <CardTitle className="text-lg">{note.title}</CardTitle>
                   </div>
-                  <BookOpen className="h-5 w-5 text-primary" />
+                  <FileText className="h-5 w-5 text-primary" />
                 </div>
-                <CardDescription className="line-clamp-2">
-                  {note.content.substring(0, 100)}...
+                <CardDescription className="line-clamp-3">
+                  {note.content && note.content.length > 150 ? `${note.content.substring(0, 150)}...` : note.content}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -119,6 +187,16 @@ const NotesPage = () => {
                       <Calendar className="h-4 w-4" />
                       {formatDate(note.updated_at)}
                     </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
                   </div>
                 </div>
               </CardContent>
