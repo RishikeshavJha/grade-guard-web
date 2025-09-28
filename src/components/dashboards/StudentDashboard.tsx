@@ -14,26 +14,18 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { DUMMY_DATA, getRecentNotes } from '@/data/dummyData';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Mock data
-  const attendancePercentage = 92;
+  // Data from centralized dummy data
+  const attendancePercentage = DUMMY_DATA.getStudentAttendance(1);
   const totalClasses = 45;
-  const attendedClasses = 41;
-  const recentNotes = [
-    { id: 1, subject: 'Mathematics', title: 'Calculus - Derivatives', date: '2024-01-15', teacher: 'Dr. Wilson' },
-    { id: 2, subject: 'Physics', title: 'Newton\'s Laws of Motion', date: '2024-01-14', teacher: 'Dr. Davis' },
-    { id: 3, subject: 'Chemistry', title: 'Organic Compounds', date: '2024-01-13', teacher: 'Dr. Smith' },
-  ];
-
-  const upcomingClasses = [
-    { subject: 'Mathematics', time: '09:00 AM', teacher: 'Dr. Wilson' },
-    { subject: 'Physics', time: '11:00 AM', teacher: 'Dr. Davis' },
-    { subject: 'Chemistry', time: '02:00 PM', teacher: 'Dr. Smith' },
-  ];
+  const attendedClasses = Math.round((attendancePercentage / 100) * totalClasses);
+  const recentNotes = getRecentNotes(3);
+  const todaysClasses = DUMMY_DATA.getTodaysTimetable('10-A').filter(item => item.type === 'lecture');
 
   return (
     <div className="space-y-6">
@@ -68,9 +60,9 @@ const StudentDashboard = () => {
             <BookOpen className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">{DUMMY_DATA.totalNotes}</div>
             <p className="text-xs text-muted-foreground">
-              3 new notes this week
+              {DUMMY_DATA.notesThisWeek} new notes this week
             </p>
           </CardContent>
         </Card>
@@ -81,9 +73,9 @@ const StudentDashboard = () => {
             <Calendar className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{todaysClasses.length}</div>
             <p className="text-xs text-muted-foreground">
-              Next class in 2 hours
+              {todaysClasses.length > 0 ? 'Next class soon' : 'No classes today'}
             </p>
           </CardContent>
         </Card>
@@ -161,14 +153,15 @@ const StudentDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {upcomingClasses.map((class_, index) => (
+              {todaysClasses.map((class_, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-accent/50 rounded-lg">
                   <div>
                     <h4 className="font-medium">{class_.subject}</h4>
                     <p className="text-sm text-muted-foreground">{class_.teacher}</p>
+                    <p className="text-xs text-muted-foreground">{class_.room}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">{class_.time}</p>
+                    <p className="font-medium">{class_.timeSlot}</p>
                     <Badge variant="outline" className="text-xs">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Scheduled
@@ -176,11 +169,14 @@ const StudentDashboard = () => {
                   </div>
                 </div>
               ))}
+              {todaysClasses.length === 0 && (
+                <p className="text-center text-muted-foreground py-4">No classes scheduled for today</p>
+              )}
             </div>
             <Button 
               variant="outline" 
               className="w-full mt-4"
-              onClick={() => navigate('/my-attendance')}
+              onClick={() => navigate('/timetable')}
             >
               View Full Schedule
             </Button>

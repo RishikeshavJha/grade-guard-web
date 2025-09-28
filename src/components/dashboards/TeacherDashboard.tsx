@@ -15,26 +15,23 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { DUMMY_DATA, getRecentNotes } from '@/data/dummyData';
 
 const TeacherDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Mock data
-  const totalStudents = 156;
-  const presentToday = 142;
-  const attendanceRate = Math.round((presentToday / totalStudents) * 100);
+  // Data from centralized dummy data
+  const totalStudents = DUMMY_DATA.totalStudents;
+  const presentToday = DUMMY_DATA.presentToday;
+  const attendanceRate = DUMMY_DATA.attendanceRate;
   
-  const recentUploads = [
-    { id: 1, title: 'Chapter 5: Integration Methods', subject: 'Mathematics', date: '2024-01-15', downloads: 34 },
-    { id: 2, title: 'Quantum Physics Basics', subject: 'Physics', date: '2024-01-14', downloads: 28 },
-    { id: 3, title: 'Thermodynamics Problems', subject: 'Physics', date: '2024-01-13', downloads: 41 },
-  ];
+  const recentUploads = getRecentNotes(3);
 
   const todayClasses = [
-    { class: '10-A', subject: 'Mathematics', time: '09:00 AM', students: 32, status: 'completed' },
-    { class: '10-B', subject: 'Mathematics', time: '11:00 AM', students: 30, status: 'upcoming' },
-    { class: '11-A', subject: 'Advanced Math', time: '02:00 PM', students: 28, status: 'upcoming' },
+    { class: '10-A', subject: 'Mathematics', time: '09:00 AM', students: DUMMY_DATA.getClassSize('10-A'), status: 'completed' },
+    { class: '10-B', subject: 'Mathematics', time: '11:00 AM', students: DUMMY_DATA.getClassSize('10-B'), status: 'upcoming' },
+    { class: '11-A', subject: 'Mathematics', time: '02:00 PM', students: DUMMY_DATA.getClassSize('11-A'), status: 'upcoming' },
   ];
 
   const getStatusColor = (status: string) => {
@@ -126,9 +123,9 @@ const TeacherDashboard = () => {
             <FileText className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42</div>
+            <div className="text-2xl font-bold">{DUMMY_DATA.totalNotes}</div>
             <p className="text-xs text-muted-foreground">
-              3 uploaded this week
+              {DUMMY_DATA.notesThisWeek} uploaded this week
             </p>
           </CardContent>
         </Card>
@@ -223,9 +220,9 @@ const TeacherDashboard = () => {
             <Button 
               variant="outline" 
               className="w-full mt-4"
-              onClick={() => navigate('/attendance-reports')}
+              onClick={() => navigate('/timetable-scheduler')}
             >
-              View All Classes
+              Manage Timetable
             </Button>
           </CardContent>
         </Card>
