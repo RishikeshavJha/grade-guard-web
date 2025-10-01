@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,11 +16,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { DUMMY_DATA, getRecentNotes } from '@/data/dummyData';
 import { useTimetable } from '@/contexts/TimetableContext';
+import { QRScannerDialog } from '@/components/QRScannerDialog';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { getTodaysTimetable } = useTimetable();
+  const [qrScannerOpen, setQrScannerOpen] = useState(false);
 
   // Data from centralized dummy data and timetable context
   const attendanceData = DUMMY_DATA.getStudentAttendance(1);
@@ -90,7 +92,7 @@ const StudentDashboard = () => {
           </CardHeader>
           <CardContent>
             <Button 
-              onClick={() => navigate('/scan-attendance')}
+              onClick={() => setQrScannerOpen(true)}
               className="w-full bg-gradient-primary hover:opacity-90"
               size="sm"
             >
@@ -186,6 +188,8 @@ const StudentDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      <QRScannerDialog open={qrScannerOpen} onOpenChange={setQrScannerOpen} />
     </div>
   );
 };
