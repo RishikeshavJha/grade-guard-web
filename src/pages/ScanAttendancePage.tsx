@@ -179,32 +179,29 @@ const ScanAttendancePage = () => {
           <CardContent className="space-y-6">
             <div className="text-center">
               <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9', maxHeight: '500px' }}>
-                {isScanning ? (
-                  <>
-                    <video
-                      ref={videoRef}
-                      className="w-full h-full object-cover"
-                      playsInline
-                      muted
-                      autoPlay
-                    />
-                    {isProcessing && (
-                      <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                        <div className="text-center">
-                          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-2" />
-                          <p className="text-sm font-medium">Processing QR Code...</p>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                <video
+                  ref={videoRef}
+                  className={`w-full h-full object-cover ${isScanning ? 'block' : 'hidden'}`}
+                  playsInline
+                  muted
+                  autoPlay
+                />
+                {!isScanning && (
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white px-4">
                       <Camera className="h-20 w-20 mx-auto mb-4 opacity-50" />
                       <p className="text-lg font-medium mb-2">Ready to Scan</p>
                       <p className="text-sm opacity-75">
                         Click "Start Scanning" to open camera
                       </p>
+                    </div>
+                  </div>
+                )}
+                {isProcessing && (
+                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                    <div className="text-center">
+                      <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-2" />
+                      <p className="text-sm font-medium">Processing QR Code...</p>
                     </div>
                   </div>
                 )}
