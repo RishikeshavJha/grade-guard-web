@@ -26,16 +26,31 @@ const ScanAttendancePage = () => {
   }, []);
 
   const startScanning = async () => {
+    console.log('Start scanning button clicked');
+    console.log('Video ref:', videoRef.current);
+    
     try {
-      if (!videoRef.current) return;
+      if (!videoRef.current) {
+        console.error('Video element not found');
+        toast({
+          title: "Error",
+          description: "Video element not ready. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
+      console.log('Setting up QR Scanner...');
       setScanStatus('scanning');
       setIsScanning(true);
       setScanResult(null);
 
       qrScannerRef.current = new QrScanner(
         videoRef.current,
-        (result) => handleScanResult(result.data),
+        (result) => {
+          console.log('QR Code detected:', result.data);
+          handleScanResult(result.data);
+        },
         {
           highlightScanRegion: true,
           highlightCodeOutline: true,
@@ -43,12 +58,14 @@ const ScanAttendancePage = () => {
         }
       );
 
+      console.log('Starting QR scanner...');
       await qrScannerRef.current.start();
+      console.log('QR scanner started successfully');
     } catch (error) {
       console.error('Error starting scanner:', error);
       toast({
-        title: "Error",
-        description: "Could not access camera. Please check permissions.",
+        title: "Camera Access Error",
+        description: error instanceof Error ? error.message : "Could not access camera. Please check permissions.",
         variant: "destructive",
       });
       setScanStatus('error');
