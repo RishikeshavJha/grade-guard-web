@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { QrCode, Camera, CheckCircle, XCircle } from 'lucide-react';
+import { QrCode, Camera, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +11,7 @@ const ScanAttendancePage = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [scanStatus, setScanStatus] = useState<'idle' | 'scanning' | 'success' | 'error'>('idle');
+  const [isProcessing, setIsProcessing] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const qrScannerRef = useRef<QrScanner | null>(null);
   const { user } = useAuth();
@@ -66,12 +67,22 @@ const ScanAttendancePage = () => {
   };
 
   const handleScanResult = async (data: string) => {
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    stopScanning();
+
     try {
       // Parse QR code data
       const qrData = JSON.parse(data);
       
-      if (!qrData.sessionId || !qrData.classId) {
+      if (!qrData.sessionId) {
         throw new Error('Invalid QR code format');
+      }
+
+      // Check expiration
+      if (qrData.expiresAt && new Date(qrData.expiresAt) < new Date()) {
+        throw new Error('This QR code has expired');
       }
 
       // Verify session is active
@@ -96,7 +107,7 @@ const ScanAttendancePage = () => {
         .from('attendance_records')
         .select('*')
         .eq('session_id', qrData.sessionId)
-        .eq('student_name', user?.email || 'Student')
+        .eq('student_name', user?.email || user?.name || 'Student')
         .single();
 
       if (existingRecord) {
@@ -108,14 +119,13 @@ const ScanAttendancePage = () => {
         .from('attendance_records')
         .insert({
           session_id: qrData.sessionId,
-          student_name: user?.email || 'Student',
+          student_name: user?.email || user?.name || 'Student',
         });
 
       if (attendanceError) throw attendanceError;
 
       setScanStatus('success');
       setScanResult('Attendance marked successfully!');
-      stopScanning();
       
       toast({
         title: "Success",
@@ -126,13 +136,14 @@ const ScanAttendancePage = () => {
       console.error('Error processing QR code:', error);
       setScanStatus('error');
       setScanResult(error instanceof Error ? error.message : 'Invalid QR code');
-      stopScanning();
       
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : 'Failed to mark attendance',
         variant: "destructive",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -150,20 +161,32 @@ const ScanAttendancePage = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="text-center">
-              <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
+              <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9', maxHeight: '500px' }}>
                 {isScanning ? (
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    playsInline
-                    muted
-                  />
+                  <>
+                    <video
+                      ref={videoRef}
+                      className="w-full h-full object-cover"
+                      playsInline
+                      muted
+                      autoPlay
+                    />
+                    {isProcessing && (
+                      <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                        <div className="text-center">
+                          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-2" />
+                          <p className="text-sm font-medium">Processing QR Code...</p>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <Camera className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                    <div className="text-center text-white px-4">
+                      <Camera className="h-20 w-20 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium mb-2">Ready to Scan</p>
                       <p className="text-sm opacity-75">
-                        Click "Start Scanning" to use your camera
+                        Click "Start Scanning" to open camera
                       </p>
                     </div>
                   </div>
@@ -175,8 +198,9 @@ const ScanAttendancePage = () => {
               {!isScanning ? (
                 <Button 
                   onClick={startScanning}
-                  className="bg-gradient-primary hover:opacity-90"
+                  className="w-full sm:w-auto"
                   size="lg"
+                  disabled={isProcessing}
                 >
                   <Camera className="h-5 w-5 mr-2" />
                   Start Scanning
@@ -186,6 +210,8 @@ const ScanAttendancePage = () => {
                   onClick={stopScanning}
                   variant="outline"
                   size="lg"
+                  className="w-full sm:w-auto"
+                  disabled={isProcessing}
                 >
                   Stop Scanning
                 </Button>
@@ -208,10 +234,19 @@ const ScanAttendancePage = () => {
                 </div>
               )}
 
-              <div className="text-sm text-muted-foreground space-y-2">
-                <p>📱 Point your camera at the QR code displayed by your teacher</p>
-                <p>⚡ Make sure you're in the correct classroom</p>
-                <p>✨ Your attendance will be marked automatically</p>
+              <div className="text-sm text-muted-foreground space-y-2 max-w-md mx-auto">
+                <p className="flex items-center gap-2">
+                  <span>📱</span>
+                  <span>Point your camera at the QR code displayed by your teacher</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <span>⚡</span>
+                  <span>QR code will be scanned automatically when detected</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <span>✨</span>
+                  <span>Your attendance will be marked instantly</span>
+                </p>
               </div>
             </div>
           </CardContent>
