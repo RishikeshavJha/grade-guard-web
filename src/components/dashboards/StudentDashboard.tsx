@@ -13,6 +13,9 @@ import {
   FileText,
   CheckCircle,
   Bell,
+  AlertCircle,
+  AlertTriangle,
+  Info,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DUMMY_DATA, getRecentNotes } from '@/data/dummyData';
@@ -41,7 +44,7 @@ const StudentDashboard = () => {
   useEffect(() => {
     fetchAnnouncements();
 
-    // Set up real-time subscription
+    // Subscribe to real-time updates
     const channel = supabase
       .channel('dashboard-announcements')
       .on(
@@ -49,7 +52,7 @@ const StudentDashboard = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'announcements',
+          table: 'announcements'
         },
         () => {
           fetchAnnouncements();
@@ -77,13 +80,23 @@ const StudentDashboard = () => {
     }
   };
 
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
+      case 'urgent': return <AlertCircle className="h-4 w-4" />;
+      case 'high': return <AlertTriangle className="h-4 w-4" />;
+      case 'normal': return <Bell className="h-4 w-4" />;
+      case 'low': return <Info className="h-4 w-4" />;
+      default: return <Bell className="h-4 w-4" />;
+    }
+  };
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-500';
-      case 'high': return 'bg-orange-500';
-      case 'normal': return 'bg-blue-500';
-      case 'low': return 'bg-gray-500';
-      default: return 'bg-blue-500';
+      case 'urgent': return 'destructive';
+      case 'high': return 'default';
+      case 'normal': return 'secondary';
+      case 'low': return 'outline';
+      default: return 'secondary';
     }
   };
 
@@ -157,7 +170,7 @@ const StudentDashboard = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Notes */}
         <Card className="shadow-soft">
           <CardHeader>
@@ -200,6 +213,49 @@ const StudentDashboard = () => {
           </CardContent>
         </Card>
 
+        {/* Today's Schedule */}
+        <Card className="shadow-soft">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Today's Schedule
+            </CardTitle>
+            <CardDescription>
+              Your classes for today
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {todaysClasses.map((class_, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-accent/50 rounded-lg">
+                  <div>
+                    <h4 className="font-medium">{class_.subject}</h4>
+                    <p className="text-sm text-muted-foreground">{class_.teacher}</p>
+                    <p className="text-xs text-muted-foreground">{class_.room}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">{class_.timeSlot}</p>
+                    <Badge variant="outline" className="text-xs">
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      Scheduled
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+              {todaysClasses.length === 0 && (
+                <p className="text-center text-muted-foreground py-4">No classes scheduled for today</p>
+              )}
+            </div>
+            <Button 
+              variant="outline" 
+              className="w-full mt-4"
+              onClick={() => navigate('/timetable')}
+            >
+              View Full Schedule
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Notice Board */}
         <Card className="shadow-soft">
           <CardHeader>
@@ -217,21 +273,20 @@ const StudentDashboard = () => {
                 <p className="text-center text-muted-foreground py-4">No announcements yet</p>
               ) : (
                 announcements.map((announcement) => (
-                  <div key={announcement.id} className="p-3 bg-accent/50 rounded-lg">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Badge className={getPriorityColor(announcement.priority)}>
-                          {announcement.priority.toUpperCase()}
-                        </Badge>
-                        <h4 className="font-medium">{announcement.title}</h4>
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {announcement.content}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        By {announcement.teacher_name}
-                      </p>
+                  <div key={announcement.id} className="p-3 bg-accent/50 rounded-lg space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={getPriorityColor(announcement.priority) as any} className="flex items-center gap-1">
+                        {getPriorityIcon(announcement.priority)}
+                        <span className="text-xs">{announcement.priority.toUpperCase()}</span>
+                      </Badge>
                     </div>
+                    <h4 className="font-medium text-sm">{announcement.title}</h4>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {announcement.content}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      By {announcement.teacher_name}
+                    </p>
                   </div>
                 ))
               )}
@@ -246,48 +301,6 @@ const StudentDashboard = () => {
           </CardContent>
         </Card>
       </div>
-
-      <Card className="shadow-soft">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Today's Schedule
-          </CardTitle>
-          <CardDescription>
-            Your classes for today
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {todaysClasses.map((class_, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-accent/50 rounded-lg">
-                <div>
-                  <h4 className="font-medium">{class_.subject}</h4>
-                  <p className="text-sm text-muted-foreground">{class_.teacher}</p>
-                  <p className="text-xs text-muted-foreground">{class_.room}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">{class_.timeSlot}</p>
-                  <Badge variant="outline" className="text-xs">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    Scheduled
-                  </Badge>
-                </div>
-              </div>
-            ))}
-            {todaysClasses.length === 0 && (
-              <p className="text-center text-muted-foreground py-4">No classes scheduled for today</p>
-            )}
-          </div>
-          <Button 
-            variant="outline" 
-            className="w-full mt-4"
-            onClick={() => navigate('/timetable')}
-          >
-            View Full Schedule
-          </Button>
-        </CardContent>
-      </Card>
 
       <QRScannerDialog open={qrScannerOpen} onOpenChange={setQrScannerOpen} />
     </div>
