@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          priority: string
+          teacher_name: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          priority?: string
+          teacher_name: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          priority?: string
+          teacher_name?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       "attendance table:": {
         Row: {
           created_at: string | null
