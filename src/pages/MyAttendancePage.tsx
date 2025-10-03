@@ -37,14 +37,14 @@ const MyAttendancePage = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center gap-3">
-        <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-        <h1 className="text-2xl sm:text-3xl font-bold">My Attendance</h1>
+        <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+        <h1 className="text-2xl md:text-3xl font-bold">My Attendance</h1>
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
@@ -99,16 +99,16 @@ const MyAttendancePage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {weeklyData.map((day) => (
-              <div key={day.day} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg gap-2 sm:gap-0">
-                <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                  <div className="w-20 font-medium text-sm sm:text-base">{day.day}</div>
+              <div key={day.day} className="flex flex-col md:flex-row items-start md:items-center justify-between p-3 md:p-4 border rounded-lg gap-2 md:gap-0">
+                <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+                  <div className="w-20 font-medium text-sm md:text-base">{day.day}</div>
                   <Badge className={`${getStatusColor(day.status)} text-xs`}>
                     {day.status}
                   </Badge>
                 </div>
-                <div className="text-xs sm:text-sm text-muted-foreground">
+                <div className="text-xs md:text-sm text-muted-foreground">
                   {day.attended}/{day.classes} classes attended
                 </div>
               </div>
@@ -126,22 +126,22 @@ const MyAttendancePage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {DUMMY_DATA.getTodaysTimetable('10-A').map((subject, index) => {
               const subjectAttendance = Math.floor(Math.random() * 20) + 80; // 80-100%
               return (
-                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg gap-3">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 w-full sm:w-auto">
-                    <div className="font-medium text-sm sm:text-base">{subject.subject}</div>
-                    <div className="text-xs sm:text-sm text-muted-foreground">
+                <div key={index} className="flex flex-col md:flex-row items-start md:items-center justify-between p-3 md:p-4 border rounded-lg gap-3">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4 w-full md:w-auto">
+                    <div className="font-medium text-sm md:text-base">{subject.subject}</div>
+                    <div className="text-xs md:text-sm text-muted-foreground">
                       by {subject.teacher}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                    <div className={`font-semibold text-sm sm:text-base ${getAttendanceColor(subjectAttendance)}`}>
+                  <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+                    <div className={`font-semibold text-sm md:text-base ${getAttendanceColor(subjectAttendance)}`}>
                       {subjectAttendance}%
                     </div>
-                    <Progress value={subjectAttendance} className="w-20 sm:w-24" />
+                    <Progress value={subjectAttendance} className="w-20 md:w-24" />
                   </div>
                 </div>
               );

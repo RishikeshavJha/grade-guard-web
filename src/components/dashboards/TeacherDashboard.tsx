@@ -43,51 +43,51 @@ const TeacherDashboard = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Good morning, {user?.name}!</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+        <h1 className="text-2xl md:text-3xl font-bold">Good morning, {user?.name}!</h1>
+        <p className="text-sm md:text-base text-muted-foreground">
           {user?.subject} Teacher • Ready to inspire minds today?
         </p>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <Button 
           onClick={() => navigate('/upload-notes')}
-          className="h-20 sm:h-24 bg-gradient-primary hover:opacity-90 flex-col gap-2 min-h-[44px]"
+          className="h-20 md:h-20 bg-gradient-primary hover:opacity-90 flex-col gap-2 min-h-[44px]"
         >
-          <Upload className="h-5 w-5 sm:h-6 sm:w-6" />
-          <span className="text-xs sm:text-sm">Upload Notes</span>
+          <Upload className="h-5 w-5 md:h-6 md:w-6" />
+          <span className="text-xs md:text-sm">Upload Notes</span>
         </Button>
         <Button 
           onClick={() => navigate('/generate-qr')}
           variant="outline"
-          className="h-20 sm:h-24 flex-col gap-2 border-primary text-primary hover:bg-primary hover:text-white min-h-[44px]"
+          className="h-20 md:h-20 flex-col gap-2 border-primary text-primary hover:bg-primary hover:text-white min-h-[44px]"
         >
-          <QrCode className="h-5 w-5 sm:h-6 sm:w-6" />
-          <span className="text-xs sm:text-sm">Generate QR</span>
+          <QrCode className="h-5 w-5 md:h-6 md:w-6" />
+          <span className="text-xs md:text-sm">Generate QR</span>
         </Button>
         <Button 
           onClick={() => navigate('/attendance-reports')}
           variant="outline"
-          className="h-20 sm:h-24 flex-col gap-2 min-h-[44px]"
+          className="h-20 md:h-20 flex-col gap-2 min-h-[44px]"
         >
-          <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6" />
-          <span className="text-xs sm:text-sm">View Reports</span>
+          <BarChart3 className="h-5 w-5 md:h-6 md:w-6" />
+          <span className="text-xs md:text-sm">View Reports</span>
         </Button>
         <Button 
           onClick={() => navigate('/students')}
           variant="outline"
-          className="h-20 sm:h-24 flex-col gap-2 min-h-[44px]"
+          className="h-20 md:h-20 flex-col gap-2 min-h-[44px]"
         >
-          <Users className="h-5 w-5 sm:h-6 sm:w-6" />
-          <span className="text-xs sm:text-sm">Manage Students</span>
+          <Users className="h-5 w-5 md:h-6 md:w-6" />
+          <span className="text-xs md:text-sm">Manage Students</span>
         </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <Card className="bg-gradient-card shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Students</CardTitle>
@@ -144,7 +144,7 @@ const TeacherDashboard = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Recent Uploads */}
         <Card className="shadow-soft">
           <CardHeader>

@@ -101,16 +101,16 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Welcome back, {user?.name}!</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+        <h1 className="text-2xl md:text-3xl font-bold">Welcome back, {user?.name}!</h1>
+        <p className="text-sm md:text-base text-muted-foreground">
           Class {user?.class} • Student ID: {user?.studentId}
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <Card className="bg-gradient-card shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Attendance Rate</CardTitle>
@@ -170,7 +170,7 @@ const StudentDashboard = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Recent Notes */}
         <Card className="shadow-soft">
           <CardHeader>
