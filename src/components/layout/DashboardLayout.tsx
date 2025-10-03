@@ -25,12 +25,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col w-full overflow-hidden">
           <DashboardHeader />
-          <main className="flex-1 p-6 bg-gradient-card">
+          <main className="flex-1 p-4 sm:p-6 bg-gradient-card overflow-y-auto">
             {children}
           </main>
         </div>

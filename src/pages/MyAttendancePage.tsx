@@ -37,14 +37,14 @@ const MyAttendancePage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center gap-3">
-        <Calendar className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold">My Attendance</h1>
+        <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+        <h1 className="text-2xl sm:text-3xl font-bold">My Attendance</h1>
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
@@ -99,16 +99,16 @@ const MyAttendancePage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {weeklyData.map((day) => (
-              <div key={day.day} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-4">
-                  <div className="w-20 font-medium">{day.day}</div>
-                  <Badge className={getStatusColor(day.status)}>
+              <div key={day.day} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg gap-2 sm:gap-0">
+                <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                  <div className="w-20 font-medium text-sm sm:text-base">{day.day}</div>
+                  <Badge className={`${getStatusColor(day.status)} text-xs`}>
                     {day.status}
                   </Badge>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-xs sm:text-sm text-muted-foreground">
                   {day.attended}/{day.classes} classes attended
                 </div>
               </div>
@@ -126,22 +126,22 @@ const MyAttendancePage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {DUMMY_DATA.getTodaysTimetable('10-A').map((subject, index) => {
               const subjectAttendance = Math.floor(Math.random() * 20) + 80; // 80-100%
               return (
-                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <div className="font-medium">{subject.subject}</div>
-                    <div className="text-sm text-muted-foreground">
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg gap-3">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 w-full sm:w-auto">
+                    <div className="font-medium text-sm sm:text-base">{subject.subject}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       by {subject.teacher}
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className={`font-semibold ${getAttendanceColor(subjectAttendance)}`}>
+                  <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                    <div className={`font-semibold text-sm sm:text-base ${getAttendanceColor(subjectAttendance)}`}>
                       {subjectAttendance}%
                     </div>
-                    <Progress value={subjectAttendance} className="w-24" />
+                    <Progress value={subjectAttendance} className="w-20 sm:w-24" />
                   </div>
                 </div>
               );
@@ -156,9 +156,9 @@ const MyAttendancePage = () => {
           <CardTitle>Monthly Overview</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-7 gap-2 text-center text-sm">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs sm:text-sm">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="font-medium p-2">{day}</div>
+              <div key={day} className="font-medium p-1 sm:p-2">{day}</div>
             ))}
             {Array.from({ length: 30 }, (_, i) => {
               const isPresent = Math.random() > 0.2; // 80% attendance rate
@@ -166,7 +166,7 @@ const MyAttendancePage = () => {
               return (
                 <div 
                   key={i} 
-                  className={`p-2 rounded ${
+                  className={`p-1 sm:p-2 rounded ${
                     isToday ? 'bg-primary text-primary-foreground' :
                     isPresent ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}
@@ -176,17 +176,17 @@ const MyAttendancePage = () => {
               );
             })}
           </div>
-          <div className="flex items-center justify-center gap-6 mt-4 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-4 text-xs sm:text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+              <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-100 border border-green-200 rounded"></div>
               <span>Present</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+              <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-100 border border-red-200 rounded"></div>
               <span>Absent</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-primary rounded"></div>
+              <div className="w-3 h-3 sm:w-4 sm:h-4 bg-primary rounded"></div>
               <span>Today</span>
             </div>
           </div>

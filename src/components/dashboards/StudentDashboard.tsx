@@ -101,16 +101,16 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Welcome back, {user?.name}!</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold">Welcome back, {user?.name}!</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Class {user?.class} • Student ID: {user?.studentId}
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card className="bg-gradient-card shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Attendance Rate</CardTitle>
@@ -161,7 +161,7 @@ const StudentDashboard = () => {
           <CardContent>
             <Button 
               onClick={() => setQrScannerOpen(true)}
-              className="w-full bg-gradient-primary hover:opacity-90"
+              className="w-full bg-gradient-primary hover:opacity-90 min-h-[44px]"
               size="sm"
             >
               Scan QR Code
@@ -170,7 +170,7 @@ const StudentDashboard = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Recent Notes */}
         <Card className="shadow-soft">
           <CardHeader>
@@ -205,7 +205,7 @@ const StudentDashboard = () => {
             </div>
             <Button 
               variant="outline" 
-              className="w-full mt-4"
+              className="w-full mt-4 min-h-[44px]"
               onClick={() => navigate('/notes')}
             >
               View All Notes
@@ -248,7 +248,7 @@ const StudentDashboard = () => {
             </div>
             <Button 
               variant="outline" 
-              className="w-full mt-4"
+              className="w-full mt-4 min-h-[44px]"
               onClick={() => navigate('/timetable')}
             >
               View Full Schedule
@@ -293,7 +293,7 @@ const StudentDashboard = () => {
             </div>
             <Button 
               variant="outline" 
-              className="w-full mt-4"
+              className="w-full mt-4 min-h-[44px]"
               onClick={() => navigate('/notices')}
             >
               View All Notices

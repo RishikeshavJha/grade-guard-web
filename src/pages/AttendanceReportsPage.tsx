@@ -34,20 +34,20 @@ const AttendanceReportsPage = () => {
   const classes = [...new Set(DUMMY_DATA.students.map(s => s.class))];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <BarChart3 className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold">Attendance Reports</h1>
+          <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-bold">Attendance Reports</h1>
         </div>
-        <Button className="bg-gradient-primary hover:opacity-90">
+        <Button className="bg-gradient-primary hover:opacity-90 min-h-[44px] w-full sm:w-auto">
           <Download className="h-4 w-4 mr-2" />
           Export Report
         </Button>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-muted-foreground">Total Students</CardTitle>
@@ -91,18 +91,18 @@ const AttendanceReportsPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 flex-1 min-w-full sm:min-w-[200px]">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-64"
+                className="flex-1 min-h-[44px]"
               />
             </div>
             <Select value={selectedClass} onValueChange={setSelectedClass}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40 min-h-[44px]">
                 <SelectValue placeholder="Select Class" />
               </SelectTrigger>
               <SelectContent>
@@ -113,7 +113,7 @@ const AttendanceReportsPage = () => {
               </SelectContent>
             </Select>
             <Select value={selectedDate} onValueChange={setSelectedDate}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40 min-h-[44px]">
                 <SelectValue placeholder="Select Date" />
               </SelectTrigger>
               <SelectContent>
@@ -129,35 +129,35 @@ const AttendanceReportsPage = () => {
       {/* Attendance List */}
       <Card>
         <CardHeader>
-          <CardTitle>Student Attendance Records</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Student Attendance Records</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredStudents.map((student) => {
               const attendance = DUMMY_DATA.getStudentAttendance(student.id);
               return (
-                <div key={student.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center text-white font-semibold">
+                <div key={student.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-3">
+                  <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base flex-shrink-0">
                       {student.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <div>
-                      <h3 className="font-semibold">{student.name}</h3>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm sm:text-base truncate">{student.name}</h3>
+                      <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
                         <span>Roll: {student.rollNo}</span>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <span>Class: {student.class}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Badge className={getStatusColor(attendance.todayStatus)}>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                    <Badge className={`${getStatusColor(attendance.todayStatus)} text-xs`}>
                       {attendance.todayStatus}
                     </Badge>
-                    <Badge className={getAttendanceColor(attendance.percentage)}>
+                    <Badge className={`${getAttendanceColor(attendance.percentage)} text-xs`}>
                       {attendance.percentage}% Overall
                     </Badge>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       {attendance.daysPresent}/{attendance.totalDays} days
                     </div>
                   </div>

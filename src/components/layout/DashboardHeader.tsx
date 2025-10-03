@@ -25,21 +25,21 @@ export const DashboardHeader = () => {
   };
 
   return (
-    <header className="h-16 border-b bg-white flex items-center justify-between px-6 shadow-soft">
-      <div className="flex items-center gap-4">
+    <header className="h-14 sm:h-16 border-b bg-white flex items-center justify-between px-3 sm:px-6 shadow-soft">
+      <div className="flex items-center gap-2 sm:gap-4">
         <SidebarTrigger />
-        <div>
-          <h1 className="text-xl font-semibold">
+        <div className="hidden sm:block">
+          <h1 className="text-lg sm:text-xl font-semibold">
             {user?.role === 'student' ? 'Student Dashboard' : 'Teacher Dashboard'}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Welcome back, {user?.name}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="text-right">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <div className="text-right hidden md:block">
           <p className="text-sm font-medium">{user?.name}</p>
           <p className="text-xs text-muted-foreground capitalize">
             {user?.role}
@@ -50,15 +50,15 @@ export const DashboardHeader = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-              <Avatar className="h-10 w-10">
-                <AvatarFallback className="bg-primary text-white">
+            <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full min-h-[44px] min-w-[44px]">
+              <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
+                <AvatarFallback className="bg-primary text-white text-sm sm:text-base">
                   {getInitials(user?.name || '')}
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="w-56 z-50" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user?.name}</p>
